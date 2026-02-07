@@ -1,0 +1,72 @@
+.tabs {
+  display: flex;
+  gap: 0;
+  margin-bottom: 30px;
+  border-bottom: 2px solid #e2e8f0;
+}
+
+.tab-button {
+  flex: 1;
+  padding: 15px 20px;
+  border: none;
+  background: transparent;
+  font-size: 16px;
+  font-weight: 600;
+  color: #718096;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  border-bottom: 3px solid transparent;
+  margin-bottom: -2px;
+}
+
+.tab-button:hover {
+  color: #4a5568;
+  background: #f7fafc;
+}
+
+.tab-button.active {
+  color: #667eea;
+  border-bottom-color: #667eea;
+  background: #f7fafc;
+}
+
+.tab-content {
+  padding-top: 10px;
+}
+
+.section {
+  margin-bottom: 30px;
+}
+
+.form-group {
+  margin-bottom: 15px;
+}
+
+/* Mobile Optimizations */
+@media (max-width: 768px) {
+  .tabs {
+    margin-bottom: 15px;
+  }
+
+  .tab-button {
+    padding: 12px 15px;
+    font-size: 15px;
+  }
+
+  .section {
+    margin-bottom: 15px;
+  }
+
+  .section h3 {
+    font-size: 1em;
+    margin-bottom: 10px;
+  }
+
+  .form-group {
+    margin-bottom: 12px;
+  }
+
+  .btn {
+    width: 100%;
+  }
+}

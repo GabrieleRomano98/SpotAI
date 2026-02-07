@@ -1,0 +1,198 @@
+.room-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 30px;
+  padding-bottom: 20px;
+  border-bottom: 2px solid #e2e8f0;
+}
+
+.room-code {
+  color: #667eea;
+  font-weight: bold;
+  letter-spacing: 2px;
+}
+
+.subtitle {
+  color: #718096;
+  font-size: 14px;
+  margin-top: 5px;
+}
+
+.players-section {
+  margin-bottom: 30px;
+}
+
+.players-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.player-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: #f7fafc;
+  padding: 15px;
+  border-radius: 8px;
+  border-left: 4px solid #667eea;
+}
+
+.player-info {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.player-name {
+  font-weight: 500;
+  color: #2d3748;
+  font-size: 16px;
+}
+
+.owner-badge {
+  background: #fef5e7;
+  color: #d68910;
+  padding: 4px 12px;
+  border-radius: 12px;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.btn-kick {
+  padding: 6px 16px;
+  border: none;
+  border-radius: 6px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  background: #fc8181;
+  color: white;
+  transition: all 0.3s ease;
+}
+
+.btn-kick:hover {
+  background: #f56565;
+  transform: translateY(-1px);
+}
+
+.owner-controls {
+  margin-top: 30px;
+  padding-top: 30px;
+  border-top: 2px solid #e2e8f0;
+}
+
+.waiting-message {
+  margin-top: 30px;
+  padding-top: 30px;
+  border-top: 2px solid #e2e8f0;
+}
+
+.helper-text {
+  color: #718096;
+  font-size: 14px;
+  margin-top: 10px;
+  text-align: center;
+}
+
+/* Mobile Optimizations */
+@media (max-width: 768px) {
+  .room-header {
+    flex-direction: column;
+    align-items: flex-start;
+    margin-bottom: 20px;
+    padding-bottom: 15px;
+    gap: 10px;
+  }
+
+  .room-header h3 {
+    font-size: 1.2em;
+    margin-bottom: 0;
+  }
+
+  .subtitle {
+    font-size: 12px;
+  }
+
+  .room-code {
+    letter-spacing: 1px;
+  }
+
+  .players-section {
+    margin-bottom: 20px;
+  }
+
+  .players-section h3 {
+    font-size: 1.1em;
+    margin-bottom: 12px;
+  }
+
+  .player-item {
+    padding: 12px;
+  }
+
+  .player-name {
+    font-size: 15px;
+  }
+
+  .owner-badge {
+    font-size: 12px;
+    padding: 3px 10px;
+  }
+
+  .btn-kick {
+    padding: 5px 12px;
+    font-size: 13px;
+  }
+
+  .owner-controls,
+  .waiting-message {
+    margin-top: 20px;
+    padding-top: 20px;
+  }
+
+  .btn {
+    width: 100%;
+  }
+
+  .helper-text {
+    font-size: 13px;
+  }
+}
+
+/* Toast Notification */
+.toast-notification {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  background: #48bb78;
+  color: white;
+  padding: 16px 24px;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  font-weight: 500;
+  z-index: 1000;
+  animation: slideIn 0.3s ease-out;
+}
+
+@keyframes slideIn {
+  from {
+    transform: translateX(400px);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+@media (max-width: 768px) {
+  .toast-notification {
+    bottom: 10px;
+    right: 10px;
+    left: 10px;
+    padding: 12px 16px;
+    font-size: 14px;
+  }
+}

@@ -1,0 +1,14 @@
+# Dockerignore to reduce image size (important for free tier)
+node_modules
+npm-debug.log
+.git
+.gitignore
+.vscode
+*.md
+README.md
+.env.local
+.env.development
+client/node_modules
+server/node_modules
+client/dist
+.dockerignore
