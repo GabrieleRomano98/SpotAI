@@ -23,6 +23,7 @@ COPY server/ ./
 COPY --from=client-builder /app/client/dist ./public
 
 # Expose port (Cloud Run requires PORT env variable)
+ENV NODE_ENV=production
 ENV PORT=8080
 EXPOSE 8080
 
