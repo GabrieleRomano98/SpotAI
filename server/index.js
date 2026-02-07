@@ -594,6 +594,13 @@ function sanitizeRoom(room) {
   }
 }
 
+// Serve index.html for all other routes in production (SPA support)
+if (isProduction) {
+  app.get('*', (req, res) => {
+    res.sendFile(path.join(__dirname, 'public', 'index.html'));
+  });
+}
+
 const PORT = process.env.PORT || 3000;
 
 server.listen(PORT, '0.0.0.0', () => {
@@ -601,9 +608,3 @@ server.listen(PORT, '0.0.0.0', () => {
   console.log(`Environment: ${isProduction ? 'production' : 'development'}`);
 });
 
-// Serve index.html for all other routes in production (SPA support)
-if (isProduction) {
-  app.get('*', (req, res) => {
-    res.sendFile(path.join(__dirname, 'public', 'index.html'));
-  });
-}
