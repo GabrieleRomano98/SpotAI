@@ -1,0 +1,25 @@
+name: Trigger Cloud Deployment
+
+on:
+  push:
+    branches:
+      - master
+      - main
+
+jobs:
+  trigger-deploy:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Trigger deployment in my-cloud-apps
+        run: |
+          curl -X POST \
+            -H "Accept: application/vnd.github.v3+json" \
+            -H "Authorization: token ${{ secrets.DEPLOY_TOKEN }}" \
+            https://api.github.com/repos/GabrieleRomano98/my-cloud-apps/dispatches \
+            -d '{"event_type":"deploy-request","client_payload":{"project_name":"spotai"}}'
+      
+      - name: Deployment triggered
+        run: |
+          echo "✅ Deployment triggered in my-cloud-apps repository"
+          echo "Watch progress at: https://github.com/GabrieleRomano98/my-cloud-apps/actions"
