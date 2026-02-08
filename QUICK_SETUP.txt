@@ -1,0 +1,15 @@
+# Quick Setup
+
+1. Get your Gemini API key from: https://aistudio.google.com/app/apikey
+
+2. Add it to your `.env` file:
+   ```
+   GEMINI_API_KEY=your_actual_key_here
+   ```
+
+3. Restart the server:
+   ```bash
+   npm run dev
+   ```
+
+The AI will now work!

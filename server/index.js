@@ -6,8 +6,8 @@ const path = require('path');
 const { v4: uuidv4 } = require('uuid');
 const { GoogleGenerativeAI } = require('@google/generative-ai');
 
-// Load environment variables
-require('dotenv').config();
+// Load environment variables from parent directory
+require('dotenv').config({ path: path.join(__dirname, '..', '.env') });
 
 const app = express();
 const server = http.createServer(app);
@@ -17,7 +17,7 @@ const isProduction = process.env.NODE_ENV === 'production';
 
 // Initialize Gemini AI
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
-const model = genAI.getGenerativeModel({ model: 'gemini-pro' });
+const model = genAI.getGenerativeModel({ model: 'gemini-3-flash-preview' });
 
 const io = socketIO(server, {
   cors: {
@@ -40,9 +40,11 @@ if (isProduction) {
 // Store rooms in memory (in production, use a database)
 const rooms = new Map();
 
-// AI answer generation function
+// AI answer generation function with timeout
 async function getAIAnswer(question) {
   try {
+    console.log('[AI] Generating answer for question:', question);
+    
     const prompt = `
       You are playing a fun Q&A game with humans.
       Answer this question in a casual, human-like way (1-2 sentences max).
@@ -54,14 +56,29 @@ async function getAIAnswer(question) {
 
       Answer:`;
 
-    const result = await model.generateContent(prompt);
+    const timeoutPromise = new Promise((_, reject) => 
+      setTimeout(() => reject(new Error('API timeout')), 10000)
+    );
+
+    const apiPromise = model.generateContent(prompt);
+    const result = await Promise.race([apiPromise, timeoutPromise]);
     const response = await result.response;
     const answer = response.text().trim();
     
+    console.log('[AI] Generated answer:', answer);
     return answer;
   } catch (error) {
-    console.error('Gemini API error:', error);
-    return "I'm thinking... (AI temporarily unavailable)";
+    console.error('[AI ERROR]:', error.message);
+    
+    // Return a casual fallback that looks like a real answer
+    const fallbacks = [
+      "Not sure about that one!",
+      "I'll pass on this one.",
+      "Let me think... pass!",
+      "Hmm, tough question!",
+      "I don't know honestly."
+    ];
+    return fallbacks[Math.floor(Math.random() * fallbacks.length)];
   }
 }
 
