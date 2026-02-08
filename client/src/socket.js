@@ -1,6 +1,10 @@
 import { io } from 'socket.io-client'
 
-const SERVER_URL = 'http://localhost:3000'
+// In production (Cloud Run), connect to same server
+// In development, connect to localhost backend
+const SERVER_URL = import.meta.env.PROD 
+  ? window.location.origin  // Production: same domain (https://spotai-xxx.run.app)
+  : 'http://localhost:3000' // Development: separate backend
 
 export const socket = io(SERVER_URL, {
   autoConnect: true,
