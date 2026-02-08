@@ -8,6 +8,10 @@ Real-time multiplayer Q&A game where players take turns asking questions, and an
 # Install dependencies
 npm run install-all
 
+# Set up environment variables
+cp .env.example .env
+# Edit .env and add your GEMINI_API_KEY from https://aistudio.google.com/app/apikey
+
 # Run development server
 npm run dev
 ```
@@ -34,6 +38,7 @@ Built for Google Cloud Run. The Dockerfile handles the complete build and deploy
 ### Environment Variables
 - `NODE_ENV=production` - Required for production mode
 - `PORT` - Server port (Cloud Run sets this automatically)
+- `GEMINI_API_KEY` - Google Gemini API key for AI responses
 
 ## Project Structure
 
@@ -48,6 +53,7 @@ spotai/
 
 - **Frontend**: Vue.js 3, Socket.IO Client
 - **Backend**: Node.js, Express, Socket.IO
+- **AI**: Google Gemini API
 - **Deployment**: Docker, Cloud Run
 
 ## License

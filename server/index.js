@@ -4,12 +4,20 @@ const socketIO = require('socket.io');
 const cors = require('cors');
 const path = require('path');
 const { v4: uuidv4 } = require('uuid');
+const { GoogleGenerativeAI } = require('@google/generative-ai');
+
+// Load environment variables
+require('dotenv').config();
 
 const app = express();
 const server = http.createServer(app);
 
 // Determine if we're in production (Cloud Run)
 const isProduction = process.env.NODE_ENV === 'production';
+
+// Initialize Gemini AI
+const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
+const model = genAI.getGenerativeModel({ model: 'gemini-pro' });
 
 const io = socketIO(server, {
   cors: {
@@ -33,9 +41,28 @@ if (isProduction) {
 const rooms = new Map();
 
 // AI answer generation function
-function getAPIanswer(question) {
-  // For now, just return a static string
-  return "AI answer";
+async function getAIAnswer(question) {
+  try {
+    const prompt = `
+      You are playing a fun Q&A game with humans.
+      Answer this question in a casual, human-like way (1-2 sentences max).
+      Be creative and sometimes humorous, but keep it natural so you blend in with real players.
+      Try to be short as the message has to be displayed.
+      Give me directly the answer without any introduction or comment, humans shouldn't be able to identify it 
+
+      Question: ${question}
+
+      Answer:`;
+
+    const result = await model.generateContent(prompt);
+    const response = await result.response;
+    const answer = response.text().trim();
+    
+    return answer;
+  } catch (error) {
+    console.error('Gemini API error:', error);
+    return "I'm thinking... (AI temporarily unavailable)";
+  }
 }
 
 // Room structure:
@@ -236,7 +263,7 @@ io.on('connection', (socket) => {
   });
 
   // Submit question
-  socket.on('submitQuestion', ({ roomCode, question }) => {
+  socket.on('submitQuestion', async ({ roomCode, question }) => {
     const room = rooms.get(roomCode);
     
     if (!room) {
@@ -260,8 +287,8 @@ io.on('connection', (socket) => {
     room.answers = [];
     room.phase = 'answering';
     
-    // Generate and add AI answer immediately
-    const aiAnswer = getAPIanswer(question);
+    // Generate and add AI answer
+    const aiAnswer = await getAIAnswer(question);
     room.answers.push({
       userId: 'AI',
       userName: 'AI',
