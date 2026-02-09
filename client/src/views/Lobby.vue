@@ -79,7 +79,7 @@
 <script>
 import { ref, computed, onMounted, onUnmounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
-import { socket } from '../socket'
+import api from '../api'
 import './Lobby.css'
 
 export default {
@@ -120,27 +120,30 @@ export default {
       }, 3000)
     }
     
-    const kickPlayer = (userId) => {
-      socket.emit('kickPlayer', {
-        roomCode: code.value,
-        userId
-      })
+    const kickPlayer = async (userId) => {
+      try {
+        await api.kickPlayer(code.value, userId)
+      } catch (err) {
+        error.value = err.message
+      }
     }
     
-    const startGame = () => {
-      socket.emit('startGame', {
-        roomCode: code.value
-      })
+    const startGame = async () => {
+      try {
+        await api.startGame()
+      } catch (err) {
+        error.value = err.message
+      }
     }
     
-    // Socket event handlers
-    const handleLobbyState = (data) => {
+    // Event handlers
+    const handleRoomState = (data) => {
       room.value = data
     }
     
     const handleUserJoined = (data) => {
       room.value = data.room
-      successMessage.value = `✅ ${data.user.name} joined the lobby!`
+      successMessage.value = `✅ ${data.userName} joined the lobby!`
       setTimeout(() => {
         successMessage.value = ''
       }, 3000)
@@ -148,25 +151,10 @@ export default {
     
     const handleUserLeft = (data) => {
       room.value = data.room
-      successMessage.value = `👋 ${data.user.name} left the lobby`
+      successMessage.value = `👋 ${data.userName} left the lobby`
       setTimeout(() => {
         successMessage.value = ''
       }, 3000)
-    }
-    
-    const handlePlayerKicked = (data) => {
-      if (data.kickedUserId === currentUser.value?.id) {
-        error.value = 'You have been kicked from the room'
-        setTimeout(() => {
-          router.push('/')
-        }, 2000)
-      } else {
-        room.value = data.room
-        successMessage.value = `❌ ${data.kickedUserName} was kicked from the room`
-        setTimeout(() => {
-          successMessage.value = ''
-        }, 3000)
-      }
     }
     
     const handleGameStarted = (data) => {
@@ -190,26 +178,27 @@ export default {
         return
       }
       
-      // Request current lobby state
-      socket.emit('getLobbyState', code.value)
+      // Set up API listeners
+      api.on('roomState', handleRoomState)
+      api.on('userJoined', handleUserJoined)
+      api.on('userLeft', handleUserLeft)
+      api.on('gameStarted', handleGameStarted)
+      api.on('error', handleError)
       
-      // Set up socket listeners
-      socket.on('lobbyState', handleLobbyState)
-      socket.on('userJoined', handleUserJoined)
-      socket.on('userLeft', handleUserLeft)
-      socket.on('playerKicked', handlePlayerKicked)
-      socket.on('gameStarted', handleGameStarted)
-      socket.on('error', handleError)
+      // Start polling for room updates
+      api.startPolling(code.value)
     })
     
     onUnmounted(() => {
-      // Clean up socket listeners
-      socket.off('lobbyState', handleLobbyState)
-      socket.off('userJoined', handleUserJoined)
-      socket.off('userLeft', handleUserLeft)
-      socket.off('playerKicked', handlePlayerKicked)
-      socket.off('gameStarted', handleGameStarted)
-      socket.off('error', handleError)
+      // Stop polling
+      api.stopPolling()
+      
+      // Clean up listeners
+      api.off('roomState', handleRoomState)
+      api.off('userJoined', handleUserJoined)
+      api.off('userLeft', handleUserLeft)
+      api.off('gameStarted', handleGameStarted)
+      api.off('error', handleError)
     })
     
     return {

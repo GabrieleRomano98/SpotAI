@@ -244,6 +244,8 @@
 .modal-body {
   padding: 24px;
   overflow-y: auto;
+  max-height: calc(80vh - 80px); /* Subtract modal header height */
+  flex: 1;
 }
 
 .modal-question {
@@ -1129,6 +1131,7 @@
 
   .modal-body {
     padding: 18px;
+    max-height: calc(90vh - 70px); /* Subtract modal header height for mobile */
   }
 
   .modal-question-text {

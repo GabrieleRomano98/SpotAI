@@ -38,23 +38,45 @@ Built for Google Cloud Run. The Dockerfile handles the complete build and deploy
 ### Environment Variables
 - `NODE_ENV=production` - Required for production mode
 - `PORT` - Server port (Cloud Run sets this automatically)
-- `GEMINI_API_KEY` - Google Gemini API key for AI responses
+- `GEMINI_API_KEY` - Google Gemini API key for AI responses (get from https://aistudio.google.com/app/apikey)
+- `SESSION_SECRET` - Secret key for session encryption (recommended for production)
 
 ## Project Structure
 
 ```
 spotai/
 ├── client/         # Vue.js frontend
-├── server/         # Express + Socket.IO backend
+│   └── src/
+│       ├── api.js       # REST API client with Server-Sent Events
+│       └── views/       # Vue components
+├── server/         # Express REST API backend
+│   └── index.js         # Main server file
 └── Dockerfile      # Production container config
 ```
 
 ## Tech Stack
 
-- **Frontend**: Vue.js 3, Socket.IO Client
-- **Backend**: Node.js, Express, Socket.IO
+- **Frontend**: Vue.js 3, REST API with Server-Sent Events (SSE)
+- **Backend**: Node.js, Express, Express-Session, Server-Sent Events
 - **AI**: Google Gemini API
-- **Deployment**: Docker, Cloud Run
+- **Deployment**: Docker, Google Cloud Run
+- **Real-time**: Server-Sent Events (SSE) for instant updates
+
+## Architecture
+
+SpotAI uses a **session-based REST API** with **Server-Sent Events (SSE)** for real-time updates:
+
+- **Sessions**: Cookie-based user sessions with `express-session`
+- **REST Endpoints**: Standard HTTP POST/GET for game actions
+- **SSE**: Unidirectional real-time updates from server to clients
+- **Broadcast System**: Server broadcasts events to all players in a room
+
+### Key Features
+- ✅ No Socket.IO dependency
+- ✅ Instant real-time updates via SSE
+- ✅ Session-based authentication
+- ✅ Horizontal scaling ready (with Redis session store)
+- ✅ Standard HTTP/HTTPS compatible
 
 ## License
 

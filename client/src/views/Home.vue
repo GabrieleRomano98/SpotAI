@@ -78,7 +78,7 @@
 <script>
 import { ref } from 'vue'
 import { useRouter } from 'vue-router'
-import { socket } from '../socket'
+import api from '../api'
 import './Home.css'
 
 export default {
@@ -96,47 +96,38 @@ export default {
     const roomCode = ref(roomCodeFromUrl ? roomCodeFromUrl.toUpperCase() : '')
     const error = ref('')
     
-    const createRoom = () => {
+    const createRoom = async () => {
       if (!createUserName.value.trim()) return
       
       error.value = ''
-      socket.emit('createRoom', createUserName.value.trim())
-      
-      socket.once('roomCreated', ({ roomCode }) => {
+      try {
+        const { roomCode } = await api.createRoom(createUserName.value.trim())
         router.push({
           name: 'Lobby',
           params: { code: roomCode },
           query: { userName: createUserName.value.trim() }
         })
-      })
-      
-      socket.once('error', (data) => {
-        error.value = data.message
-      })
+      } catch (err) {
+        error.value = err.message
+      }
     }
     
-    const joinRoom = () => {
+    const joinRoom = async () => {
       if (!joinUserName.value.trim() || !roomCode.value.trim()) return
       
       error.value = ''
       const code = roomCode.value.trim().toUpperCase()
       
-      socket.emit('joinRoom', {
-        roomCode: code,
-        userName: joinUserName.value.trim()
-      })
-      
-      socket.once('roomJoined', () => {
+      try {
+        await api.joinRoom(code, joinUserName.value.trim())
         router.push({
           name: 'Lobby',
           params: { code },
           query: { userName: joinUserName.value.trim() }
         })
-      })
-      
-      socket.once('error', (data) => {
-        error.value = data.message
-      })
+      } catch (err) {
+        error.value = err.message
+      }
     }
     
     return {
