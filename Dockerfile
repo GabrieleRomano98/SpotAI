@@ -22,10 +22,10 @@ COPY server/ ./
 # Copy built client files to be served by Express
 COPY --from=client-builder /app/client/dist ./public
 
-# Expose port (Cloud Run requires PORT env variable)
+# Expose port
 ENV NODE_ENV=production
-ENV PORT=8080
-EXPOSE 8080
+ENV PORT=3001
+EXPOSE 3001
 
 # Start the server
 CMD ["node", "index.js"]
